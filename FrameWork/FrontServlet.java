@@ -43,12 +43,35 @@ public class FrontServlet<T> extends HttpServlet {
         try (PrintWriter out = response.getWriter()) 
         {
             String url=response.encodeRedirectURL(request.getRequestURL().toString());
-                out.print(url);
+            String[] part=url.split("FrontServlet");
+            if(1<part.length)
+            {
+                Set<String> allKey = mappingUrls.keySet();
+                for(String oneKey : allKey)
+                {
+                    if(part[1].equals(oneKey))
+                    {
+                        Mapping m = (Mapping)mappingUrls.get(oneKey);
+                        String classe = m.getclassName();
+                        String method = m.getmethod();
+                        ModelView mv=null;
+                        try
+                        {
+                            T objet = instantiate(classe);
+                            Method fonction = objet.getClass().getMethod(method);
+                            mv = (ModelView)fonction.invoke(objet,(Object[]) null);
+                        }
+                        catch(Exception e)
+                        {
 
+                        }
+
+                        RequestDispatcher redirect = request.getRequestDispatcher("/"+mv.getview());
+                        redirect.forward(request,response);
                         return;
-                    
-                
-            
+                    }
+                }
+            }
         }
     }
 

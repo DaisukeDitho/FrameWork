@@ -1,6 +1,7 @@
 package model;
 
 import monAnnotation.*;
+import vue.ModelView;
 
 public class Emp 
 {
@@ -41,8 +42,10 @@ public class Emp
     }
 
     @Model(url="/salaireJournalier")
-    public void getView()
+    public ModelView getView()
     {
-       
+        int result = this.getsalaire()/30;
+        ModelView ta = new ModelView("emp.jsp");
+        return ta;
     }
 }
