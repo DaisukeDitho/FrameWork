@@ -1,15 +1,16 @@
 package etu1971.framework.servlet;
 
 import etu1971.framework.Mapping;
-import java.util.HashMap;
+import java.util.*;
+import java.lang.reflect.*;
 import java.io.*;
 import java.nio.file.*;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import fonction.*;
-import model.*;
+import vue.*;
 
-public class FrontServlet extends HttpServlet {
+public class FrontServlet<T> extends HttpServlet {
     HashMap<String,Mapping> mappingUrls;
 
     public void setmappingUrls(HashMap<String,Mapping> haha)
@@ -28,24 +29,26 @@ public class FrontServlet extends HttpServlet {
         setmappingUrls(Fonction.findAnnotatedMethod("C:/Program Files/Apache Software Foundation/Tomcat 10.0/webapps/Construct-FrameWork/WEB-INF/classes/model")); 
     }
 
+    public static <T> T instantiate(String className) throws Exception
+    {
+        Class<T> clazz = (Class<T>) Class.forName(className);
+        Constructor<T> constructor = clazz.getConstructor();
+        T instance = constructor.newInstance();
+        return instance;
+    }
+
     public void processRequest(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException 
     {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
+        try (PrintWriter out = response.getWriter()) 
+        {
+            String url=response.encodeRedirectURL(request.getRequestURL().toString());
+                out.print(url);
 
-            String[]tab=request.getRequestURL().toString().split("Construct-FrameWork");
-            String result=tab[tab.length-1];
-
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet ListServiceController</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>" + getmappingUrls().size() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+                        return;
+                    
+                
+            
         }
     }
 
