@@ -33,4 +33,9 @@ public class ModelView {
         this.setdata(new HashMap <String,Object>());
     }
 
+    public ModelView()
+    {
+
+    }
+
 }

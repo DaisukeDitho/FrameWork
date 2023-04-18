@@ -63,4 +63,19 @@ public class Emp
 
         return ta;
     }
+
+    @Model(url="/load_form")
+    public ModelView load_form()
+    {
+        ModelView mmv = new ModelView();
+        mmv.setview("Save.jsp");
+        return mmv;
+    }
+
+    @Model(url="/formulaire")
+    public void getCoordonnees()
+    {
+        ModelView mmv = new ModelView();
+        System.out.println(this.getname()+","+this.getposte()+","+this.getsalaire());
+    }
 }
