@@ -1,5 +1,6 @@
 package model;
 
+import java.util.*;
 import monAnnotation.*;
 import vue.ModelView;
 
@@ -36,16 +37,30 @@ public class Emp
         return this.salaire;
     }
 
+    public Emp(String name)
+    {
+        setname(name);
+    }
     public Emp()
     {
-        
+
     }
 
     @Model(url="/salaireJournalier")
     public ModelView getView()
     {
-        int result = this.getsalaire()/30;
+        ArrayList <Emp> mpiasa = new ArrayList<Emp>();
+        Emp za = new Emp("Fiaro");
+        mpiasa.add(za);
+        Emp elah = new Emp("Antsa");
+        mpiasa.add(elah);
+        Emp tazika = new Emp("TojoKely");
+        mpiasa.add(tazika);
+        
         ModelView ta = new ModelView("emp.jsp");
+
+        ta.addItem("liste",mpiasa);
+
         return ta;
     }
 }

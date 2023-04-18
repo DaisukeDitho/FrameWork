@@ -42,6 +42,7 @@ public class FrontServlet<T> extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) 
         {
+            out.print("vghk");
             String url=response.encodeRedirectURL(request.getRequestURL().toString());
             String[] part=url.split("FrontServlet");
             if(1<part.length)
@@ -60,10 +61,17 @@ public class FrontServlet<T> extends HttpServlet {
                             T objet = instantiate(classe);
                             Method fonction = objet.getClass().getMethod(method);
                             mv = (ModelView)fonction.invoke(objet,(Object[]) null);
+                            HashMap <String,Object> data = mv.getdata();
+                            Set<String> keyData = data.keySet();
+                            for(String keyObject : keyData)
+                            {
+                                T object = (T)data.get(keyObject);
+                                request.setAttribute(keyObject,object);
+                            }
                         }
                         catch(Exception e)
                         {
-
+                            e.printStackTrace(out);
                         }
 
                         RequestDispatcher redirect = request.getRequestDispatcher("/"+mv.getview());
