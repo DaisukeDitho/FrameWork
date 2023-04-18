@@ -37,6 +37,27 @@ public class FrontServlet<T> extends HttpServlet {
         return instance;
     }
 
+    public Object convertParamValue(String paramValue,Class<?> paramType)
+    {
+        if(paramType == String.class)
+        {
+            return paramValue;
+        }
+        else if(paramType == int.class || paramType == Integer.class)
+        {
+            return Integer.parseInt(paramValue);
+        }
+        else if(paramType == boolean.class || paramType == Boolean.class)
+        {
+            return Boolean.parseBoolean(paramValue);
+        }
+        else if(paramType == double.class || paramType == Double.class)
+        {
+            return Double.parseDouble(paramValue);
+        }
+        return null;
+    }
+
     public void processRequest(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException 
     {
         response.setContentType("text/html;charset=UTF-8");
@@ -59,6 +80,31 @@ public class FrontServlet<T> extends HttpServlet {
                         try
                         {
                             T objet = instantiate(classe);
+
+                            Field[] field = objet.getClass().getDeclaredFields();
+                            String[] attributs = new String[field.length];
+                            for(int x=0;x<field.length;x++)
+                            {
+                                attributs[x] = field[x].getName();
+                            }
+
+                            Enumeration<String> paramNames = request.getParameterNames();
+                            while(paramNames.hasMoreElements())
+                            {
+                                String paramName = paramNames.nextElement();
+
+                                for(int t=0;t<attributs.length;t++)
+                                {
+                                    if(attributs[t].equals(paramName))
+                                    {
+                                        String[] paramValues = request.getParameterValues(paramName);
+                                        Method methody = objet.getClass().getMethod("set"+attributs[t],field[t].getType());
+                                        Object paramValue = convertParamValue(paramValues[0],field[t].getType());
+                                        methody.invoke(objet,paramValue);
+                                    }
+                                }
+                            }
+
                             Method fonction = objet.getClass().getMethod(method);
                             mv = (ModelView)fonction.invoke(objet,(Object[]) null);
                             HashMap <String,Object> data = mv.getdata();
