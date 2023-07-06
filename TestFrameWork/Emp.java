@@ -2,6 +2,7 @@ package model;
 
 import java.util.*;
 import monAnnotation.*;
+import vue.FileUpload;
 import vue.ModelView;
 
 public class Emp 
@@ -9,7 +10,8 @@ public class Emp
     String name;
     String poste;
     int salaire;
-    int id;
+    String[]option;
+    FileUpload sary;
 
     public void setname(String name)
     {
@@ -37,23 +39,28 @@ public class Emp
     {
         return this.salaire;
     }
-    public void setid(int id)
+
+    public void setoption(String[]option)
     {
-        this.id=id;
+        this.option=option;
     }
-    public int getid()
+    public String[] getoption()
     {
-        return this.id;
+        return this.option;
+    }
+
+    public void setsary(FileUpload sary)
+    {
+        this.sary=sary;
+    }
+    public FileUpload getsary()
+    {
+        return this.sary;
     }
 
     public Emp(String name)
     {
         setname(name);
-    }
-    public Emp(String name,int id)
-    {
-        setname(name);
-        setid(id);
     }
     public Emp()
     {
@@ -64,14 +71,13 @@ public class Emp
     public ModelView getView()
     {
         ArrayList <Emp> mpiasa = new ArrayList<Emp>();
-        Emp za = new Emp("Fiaro",1);
+        Emp za = new Emp("Fiaro");
         mpiasa.add(za);
-        Emp elah = new Emp("Antsa",2);
+        Emp elah = new Emp("Antsa");
         mpiasa.add(elah);
-        Emp tazika = new Emp("TojoKely",3);
+        Emp tazika = new Emp("TojoKely");
         mpiasa.add(tazika);
         
-        //System.out.println("TAY MAFANA : "+mpiasa.size());
         ModelView ta = new ModelView("emp.jsp");
 
         ta.addItem("liste",mpiasa);
@@ -94,22 +100,46 @@ public class Emp
         System.out.println(this.getname()+","+this.getposte()+","+this.getsalaire());
     }
 
-    @Model(url="/detail")
-    public ModelView voir_detail(int id)
+    @Model(url="/load_choice")
+    public ModelView load_choice()
+    {
+        ModelView mv = new ModelView();
+        mv.setview("Choix.jsp");
+        return mv;
+    }
+
+    @Model(url="/choice")
+    public ModelView getChoix()
     {
         ModelView mv=new ModelView();
-        mv.setview("Detail.jsp");
+        mv.setview("TonChoix.jsp");
         ArrayList<Emp> mpiasa=new ArrayList<Emp>();
-        Emp[] mpiasaTab=new Emp[3];
-        Emp emp1=new Emp("Daisuke",1);
-        mpiasaTab[0]=emp1;
-        Emp emp2=new Emp("Baby",2);
-        mpiasaTab[1]=emp2;
-        Emp emp3=new Emp("ZandryKely",3);
-        mpiasaTab[2]=emp3;
+        Emp emp=new Emp();
+        emp.setoption(this.getoption());
+        mpiasa.add(emp);
+        mv.addItem("Liste_personne",mpiasa);
+        System.out.println("mnmmn");
+        return mv;
+    }
 
-        mpiasa.add(mpiasaTab[id-1]);
-        mv.addItem("Liste_Employee",mpiasa);
+    @Model(url="/load_upload")
+    public ModelView load_upload()
+    {
+        ModelView mv=new ModelView();
+        mv.setview("Upload.jsp");
+        return mv;
+    }
+
+    @Model(url="/upload")
+    public ModelView getupload()
+    {
+        ModelView mv=new ModelView();
+        mv.setview("Sary.jsp");
+        ArrayList<Emp> olona=new ArrayList<Emp>();
+        Emp emp=new Emp();
+        emp.setsary(this.getsary());
+        olona.add(emp);
+        mv.addItem("Liste_personne",olona);
         return mv;
     }
 }
