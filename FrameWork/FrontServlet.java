@@ -65,6 +65,7 @@ public class FrontServlet<T> extends HttpServlet {
         {
             out.print("vghk");
             String url=response.encodeRedirectURL(request.getRequestURL().toString());
+            out.print(url);
             String[] part=url.split("FrontServlet");
             if(1<part.length)
             {
@@ -80,6 +81,18 @@ public class FrontServlet<T> extends HttpServlet {
                         try
                         {
                             T objet = instantiate(classe);
+                            Method[] methods=objet.getClass().getDeclaredMethods();
+                            Method fonction = null;
+                            
+                            for(Method mt: methods)
+                            {
+                                if(mt.getName().equals(method))
+                                {
+                                    fonction=mt;
+                                    break;
+                                }
+                            }
+                            
 
                             Field[] field = objet.getClass().getDeclaredFields();
                             String[] attributs = new String[field.length];
@@ -88,6 +101,8 @@ public class FrontServlet<T> extends HttpServlet {
                                 attributs[x] = field[x].getName();
                             }
 
+                            Parameter[] param=fonction.getParameters();
+                            ArrayList<Object> parameter=new ArrayList<>();
                             Enumeration<String> paramNames = request.getParameterNames();
                             while(paramNames.hasMoreElements())
                             {
@@ -103,10 +118,18 @@ public class FrontServlet<T> extends HttpServlet {
                                         methody.invoke(objet,paramValue);
                                     }
                                 }
+                                for(int y=0;y<param.length;y++)
+                                {
+                                    if(param[y].getName().equals(paramName))
+                                    {
+                                        String[] paramValues=request.getParameterValues(paramName);
+                                        Object paramValue=convertParamValue(paramValues[0],param[y].getType());
+                                        parameter.add(paramValue);
+                                    }
+                                }
                             }
-
-                            Method fonction = objet.getClass().getMethod(method);
-                            mv = (ModelView)fonction.invoke(objet,(Object[]) null);
+                            Object[] paramfonction=parameter.toArray();
+                            mv = (ModelView)fonction.invoke(objet,paramfonction);
                             HashMap <String,Object> data = mv.getdata();
                             Set<String> keyData = data.keySet();
                             for(String keyObject : keyData)

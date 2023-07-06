@@ -1,6 +1,6 @@
 @echo off
 
-javac -d ./WEB-INF/classes *.java
+javac -parameters -d ./WEB-INF/classes *.java
 
 setlocal enableDelayedExpansion
 
