@@ -55,19 +55,20 @@ public class Fonction{
             for (Method one : allMeth) {
                 Annotation[]annot=one.getDeclaredAnnotations();
                 for (Annotation aa : annot) {
-                    Model anah=(Model)aa;
+                    Model anah = (Model) aa;
                     
-                        result[0]=clazz.getName();
-                        result[1]=one.getName();
-                        result[2]=anah.url();
-                        System.out.println("Classe : "+result[0]);
+                    result[0]=clazz.getName();
+                    result[1]=one.getName();
+                    result[2]=anah.url();
+                    System.out.println("Classe : "+result[0]);
                         System.out.println("Fonction : "+result[1]);
                         System.out.println("URL : "+result[2]);
                         System.out.println("--------------------------------");
 
                         Mapping koko=new Mapping(result[0],result[1]);
                         list.put(result[2],koko);
-                        System.out.println("isany : "+list.size());
+
+                        System.out.println("isany : " + list.size());
                 }
             }
         }
