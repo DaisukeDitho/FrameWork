@@ -2,6 +2,7 @@ package fonction;
 
 import java.lang.annotation.*;
 import java.util.Vector;
+import java.util.*;
 import java.io.File;
 import java.lang.reflect.*;
 import monAnnotation.*;
@@ -44,13 +45,18 @@ public class Fonction{
         return classes;
     }
 
-    public static HashMap<String,Mapping> findAnnotatedMethod( String packageName) 
+    public static HashMap<String,Mapping> findAnnotatedMethod(String packageName,HashMap<String,Object> instance) 
     {
         HashMap<String,Mapping> list = new HashMap<String,Mapping>();
         String[]result=new String[3];
         Vector<Class<?>> annotatedClasses = new Vector<Class<?>>();
         Vector<Class<?>> classes = findClasses(packageName);
         for (Class<?> clazz : classes) {
+            Scope scopeAnnotation=clazz.getAnnotation(Scope.class);
+            if(scopeAnnotation!=null)
+            {
+                instance.put(clazz.getName(),null);
+            }
             Method[]allMeth=clazz.getDeclaredMethods();
             for (Method one : allMeth) {
                 Annotation[]annot=one.getDeclaredAnnotations();
@@ -72,6 +78,7 @@ public class Fonction{
                 }
             }
         }
+
         return list;
     }
 }   

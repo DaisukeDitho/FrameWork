@@ -12,6 +12,7 @@ public class Emp
     int salaire;
     String[]option;
     FileUpload sary;
+    int test=0;
 
     public void setname(String name)
     {
@@ -67,6 +68,15 @@ public class Emp
 
     }
 
+    public void settest(int test)
+    {
+        this.test=test;
+    }
+    public int gettest()
+    {
+        return this.test;
+    }
+
     @Model(url="/salaireJournalier")
     public ModelView getView()
     {
@@ -94,7 +104,7 @@ public class Emp
     }
 
     @Model(url="/formulaire")
-    public void getCoordonnees()
+    public void getCoordonneess()
     {
         ModelView mmv = new ModelView();
         System.out.println(this.getname()+","+this.getposte()+","+this.getsalaire());
@@ -140,6 +150,20 @@ public class Emp
         emp.setsary(this.getsary());
         olona.add(emp);
         mv.addItem("Liste_personne",olona);
+        return mv;
+    }
+
+    @Model(url="/formulaire_emp")
+    public ModelView getCoordonnees()
+    {
+        this.settest(this.gettest()+1);
+        ModelView mv=new ModelView();
+        mv.setview("Valider_emp.jsp");
+        ArrayList<Emp> olona=new ArrayList<Emp>();
+        Emp user=new Emp();
+        user.settest(this.gettest());
+        olona.add(user);
+        mv.addItem("Liste_emp",olona);
         return mv;
     }
 }
