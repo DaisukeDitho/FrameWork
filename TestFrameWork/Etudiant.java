@@ -1,12 +1,16 @@
 package model;
 
 import monAnnotation.*;
+import vue.ModelView;
+import java.util.*;
 
+@Scope
 public class Etudiant
 {
     String name;
     String poste;
     int salaire;
+    int test=0;
 
     public void setname(String name)
     {
@@ -35,6 +39,15 @@ public class Etudiant
         return this.salaire;
     }
 
+    public void settest(int test)
+    {
+        this.test=test;
+    }
+    public int gettest()
+    {
+        return this.test;
+    }
+
     public Etudiant()
     {
         
@@ -45,5 +58,19 @@ public class Etudiant
     {
         int result = this.getsalaire()/30;
         return result;
+    }
+
+    @Model(url="/formulaire_etu")
+    public ModelView getCoordonnees()
+    {
+        this.settest(this.gettest()+1);
+        ModelView mv=new ModelView();
+        mv.setview("Valider.jsp");
+        ArrayList<Etudiant> olona=new ArrayList<Etudiant>();
+        Etudiant user=new Etudiant();
+        user.settest(this.gettest());
+        olona.add(user);
+        mv.addItem("Liste_etudiant",olona);
+        return mv;
     }
 }

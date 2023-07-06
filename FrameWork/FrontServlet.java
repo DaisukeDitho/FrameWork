@@ -9,11 +9,13 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.MultipartConfig;
 import fonction.*;
+import monAnnotation.*;
 import vue.*;
 
 @MultipartConfig
 public class FrontServlet<T> extends HttpServlet {
     HashMap<String,Mapping> mappingUrls;
+    HashMap<String,Object> instance=new HashMap<String,Object>();
 
     public void setmappingUrls(HashMap<String,Mapping> haha)
     {
@@ -28,15 +30,7 @@ public class FrontServlet<T> extends HttpServlet {
     {
         String popo=getServletContext().getRealPath("/WEB-INF/classes");
         Path lololol=Paths.get(popo+"/model");
-        setmappingUrls(Fonction.findAnnotatedMethod("C:/Program Files/Apache Software Foundation/Tomcat 10.0/webapps/Construct-FrameWork/WEB-INF/classes/model")); 
-    }
-
-    public static <T> T instantiate(String className) throws Exception
-    {
-        Class<T> clazz = (Class<T>) Class.forName(className);
-        Constructor<T> constructor = clazz.getConstructor();
-        T instance = constructor.newInstance();
-        return instance;
+        setmappingUrls(Fonction.findAnnotatedMethod("C:/Program Files/Apache Software Foundation/Tomcat 10.0/webapps/Construct-FrameWork/WEB-INF/classes/model",instance)); 
     }
 
     public Object convertParamValue(String paramValue,Class<?> paramType)
@@ -110,17 +104,21 @@ public class FrontServlet<T> extends HttpServlet {
                             Parameter[] param=fonction.getParameters();
                             ArrayList<Object> parameter=new ArrayList<>();
                             Enumeration<String> paramNames = request.getParameterNames();
+                            
                             try
                             {
-                                Collection<Part>files=request.getParts();
-                                for(int i=0;i<field.length;i++)
+                                if(request.getContentType()!=null && request.getContentType().startsWith("multipart/form-data"))
                                 {
-                                    Field f=field[i];
-                                    if(f.getType()==vue.FileUpload.class)
+                                    Collection<Part>files=request.getParts();
+                                    for(int i=0;i<field.length;i++)
                                     {
-                                        Method mmethod=objet.getClass().getMethod("set"+attributs[i],field[i].getType());
-                                        FileUpload o=this.upload(files,attributs[i]);
-                                        mmethod.invoke(objet,o);
+                                        Field f=field[i];
+                                        if(f.getType()==vue.FileUpload.class)
+                                        {
+                                            Method mmethod=objet.getClass().getMethod("set"+attributs[i],field[i].getType());
+                                            FileUpload o=this.upload(files,attributs[i]);
+                                            mmethod.invoke(objet,o);
+                                        }
                                     }
                                 }
 
@@ -290,6 +288,74 @@ public class FrontServlet<T> extends HttpServlet {
             }
         }
         return null; 
+    }
+
+    public void reset_attribut(Object obj)throws Exception
+    {
+        Field[]fields=obj.getClass().getDeclaredFields();
+        for(Field field : fields)
+        {
+            field.setAccessible(true);
+            Object defaultValue=defaut(field.getType());
+            field.set(obj,defaultValue);
+        }
+    }
+
+    public static Object defaut(Class<?> type)
+    {
+        if(type==boolean.class || type==Boolean.class)
+        {
+            return false;
+        }
+        else if(type==byte.class || type==Byte.class)
+        {
+            return (byte)0;
+        }
+        else if(type==int.class || type==Integer.class)
+        {
+            return 0;
+        }
+        else if(type==float.class || type==Float.class || type==double.class || type==Double.class)
+        {
+            return 0.0;
+        }
+        else if(type==String.class)
+        {
+            return "";
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public T instantiate(String className)throws Exception
+    {
+        Set<String> keySet=instance.keySet();
+
+        for(String key : keySet)
+        {
+            if(className.equals(key))
+            {
+                T m=(T)instance.get(className);
+                if(m!=null)
+                {
+                    return m;
+                }
+                else
+                {
+                    Class<T> clazz=(Class<T>) Class.forName(className);
+                    Constructor<T> constructor=clazz.getConstructor();
+                    T instance_object=constructor.newInstance();
+                    instance.replace(className,instance_object);
+                    return (T)instance.get(className);
+                }
+            }
+        }
+        Class<T> clazz=(Class<T>) Class.forName(className);
+        Constructor<T> constructor=clazz.getConstructor();
+        T instance_object=constructor.newInstance();
+        return instance_object;
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException 
