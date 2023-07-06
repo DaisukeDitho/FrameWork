@@ -24,6 +24,9 @@ public class ModelView {
 
     public void addItem(String key,Object value)
     {
+        if (this.data == null) {
+            this.data = new HashMap <String,Object>(); 
+        }
         this.data.put(key,value);
     }
 

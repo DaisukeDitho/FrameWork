@@ -1,4 +1,4 @@
-javac -d WEB-INF/classes -classpath WEB-INF/lib/allClass.jar *.java
+javac -parameters -d WEB-INF/classes -classpath WEB-INF/lib/allClass.jar *.java
 
 jar -cvf FrontServlet.war *
 
